@@ -1,0 +1,34 @@
+Word count program -- Pyspark.
+# reading file from rdd. 
+rdd_text=sc.textFile("dbfs:/FileStore/tables/wordcount.txt")
+#type(rdd_text)
+# removing white space using strip function. 
+#converting into lower case using lower() function.
+#string to word convertion using split() function
+rdd_flatmap=rdd_text.flatMap(lambda a:a.strip().lower().split(" "))
+#rdd_flatmap.collect()--> this will result each word with quotes.
+# filtering empty space or empty word.
+rdd_filter = rdd_flatmap.filter(lambda a:a!='')
+#rdd_filter.collect()--> this output will remove empty spaces or empty word.
+#converting key value a pair as adding 1 for each word.
+rdd_map=rdd_filter.map(lambda a:(a,1))
+#rdd_map.collect()--> assigned value for 1 foe each element. 
+rdd_reduce=rdd_map.reduceByKey(lambda a,b:a+b) 
+rdd_map2=rdd_reduce.map(lambda a:(a[1],a[0]))
+#rdd_reduce.collect() --> this will reduce and group by value.
+#sorting max count. 
+rdd_final=rdd_map2.sortByKey(False)
+
+Out[61]: [(589, 'the'),
+ (255, 'of'),
+ (229, 'and'),
+ (208, 'in'),
+ (167, 'to'),
+ (153, 'a'),
+ (136, 'film'),
+ (97, 'was'),
+ (84, 'for'),
+ (74, 'on'),
+ (73, 'that'),
+ (63, 'is'),
+ (60, 'as'),
